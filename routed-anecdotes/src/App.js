@@ -22,10 +22,30 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`} >{anecdote.content}</Link>
+        </li>)}
     </ul>
   </div>
 )
+
+const SingleAnec = ({ anecdotes }) => {
+  const id = useParams().id
+  const anec = anecdotes.find(anecdotes => anecdotes.id === Number(id))
+  return (
+    <div>
+      <h2>{anec.content}</h2>
+      <div>
+        has {anec.votes} votes
+      </div>
+      <div>
+        for more info see {anec.info}
+      </div>
+
+    </div>
+  )
+}
 
 const About = () => (
   <div>
@@ -54,6 +74,7 @@ const CreateNew = (props) => {
   const [author, setAuthor] = useState('')
   const [info, setInfo] = useState('')
 
+  const navigate = useNavigate()
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -63,6 +84,12 @@ const CreateNew = (props) => {
       info,
       votes: 0
     })
+    navigate('/')
+    props.setNotification(`a new anecdote ${content} created!`)
+    setTimeout(() => {
+      props.setNotification(null)
+    }, 5000)
+
   }
 
   return (
@@ -88,6 +115,25 @@ const CreateNew = (props) => {
 
 }
 
+const Notif = (props) => {
+  const mystyle = {
+    color: "white",
+    backgroundColor: "DodgerBlue",
+    padding: "10px",
+    fontFamily: "Arial"
+  }
+
+  if (props.notification === null) {
+    return null
+  }
+
+  return (
+    <div style={mystyle}>
+      {props.notification}
+    </div>
+  )
+}
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -106,7 +152,7 @@ const App = () => {
     }
   ])
 
-  const [notification, setNotification] = useState('')
+  const [notification, setNotification] = useState(null)
 
   const addNew = (anecdote) => {
     anecdote.id = Math.round(Math.random() * 10000)
@@ -134,10 +180,11 @@ const App = () => {
       <h1>Software Anecdores</h1>
       <Router>
         <Menu />
+        <Notif notification={notification} />
         <Routes>
-
+          <Route path="/anecdotes/:id" element={<SingleAnec anecdotes={anecdotes} />} />
           <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
-          <Route path="/createnew" element={<CreateNew addNew={addNew} />} />
+          <Route path="/createnew" element={<CreateNew addNew={addNew} setNotification={setNotification} />} />
           <Route path="/about" element={<About />} />
         </Routes>
       </Router>
