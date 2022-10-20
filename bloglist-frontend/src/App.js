@@ -15,7 +15,7 @@ const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [user, setUser] = useState(null)
-    const [refreshKey, setRefreshKey] = useState(true)
+
 
     const dispatch = useDispatch()
     useEffect(() => {
@@ -107,8 +107,6 @@ const App = () => {
                     <Blog
                         key={blog.id}
                         blog={blog}
-                        setRefreshKey={setRefreshKey}
-                        refreshKey={refreshKey}
                         user={user}
                     />
                 ))}

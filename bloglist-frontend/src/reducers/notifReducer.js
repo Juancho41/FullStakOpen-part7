@@ -18,7 +18,7 @@ const notifSlice = createSlice({
 let timeOut
 
 export const timeNotif = (notif, time) => {
-    console.log(notif)
+
     return dispatch => {
         clearTimeout(timeOut)
         dispatch(setNotif(notif))

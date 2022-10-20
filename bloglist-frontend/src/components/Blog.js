@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import blogService from '../services/blogs'
 import InfoBlog from './InfoBlog'
 import { useDispatch } from 'react-redux'
 import { timeNotif } from '../reducers/notifReducer'
+import { changeVote, deleteBlog } from '../reducers/blogReducer'
 
-const Blog = ({ blog, setRefreshKey, refreshKey, user }) => {
+const Blog = ({ blog, user }) => {
     const [showInfo, setShowInfo] = useState(false)
     const dispatch = useDispatch()
     const blogStyle = {
@@ -15,7 +15,7 @@ const Blog = ({ blog, setRefreshKey, refreshKey, user }) => {
         marginBottom: 5,
     }
 
-    const handleLike = async () => {
+    const handleLike = () => {
         const blogObject = {
             title: blog.title,
             author: blog.author,
@@ -24,9 +24,8 @@ const Blog = ({ blog, setRefreshKey, refreshKey, user }) => {
         }
 
         try {
-            const likedBlog = await blogService.update(blogObject, blog.id)
-            dispatch(timeNotif(`${likedBlog.title} updated`, 3))
-            setRefreshKey(!refreshKey)
+            dispatch(changeVote(blogObject, blog.id))
+            dispatch(timeNotif(`${blogObject.title} updated`, 3))
         } catch (exception) {
             dispatch(timeNotif(`${exception}`, 3))
         }
@@ -35,9 +34,8 @@ const Blog = ({ blog, setRefreshKey, refreshKey, user }) => {
     const handleDelete = async () => {
         if (window.confirm(`do you really want to delete ${blog.title}`)) {
             try {
-                await blogService.deleteBlog(blog.id)
+                dispatch(deleteBlog(blog.id))
                 dispatch(timeNotif(`${blog.title} deleted`, 3))
-                setRefreshKey(!refreshKey)
             } catch (exception) {
                 dispatch(timeNotif(`${exception}`, 3))
             }
