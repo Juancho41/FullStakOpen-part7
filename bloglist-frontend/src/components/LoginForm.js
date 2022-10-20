@@ -1,5 +1,11 @@
-const LoguinForm = ({ handleLogin, username, password, handleUsername, handlePassword }) => (
-    <form onSubmit={handleLogin} >
+const LoguinForm = ({
+    handleLogin,
+    username,
+    password,
+    handleUsername,
+    handlePassword,
+}) => (
+    <form onSubmit={handleLogin}>
         <div>
             username:
             <input

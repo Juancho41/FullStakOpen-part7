@@ -1,90 +1,69 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 import InfoBlog from './InfoBlog'
+import { useDispatch } from 'react-redux'
+import { timeNotif } from '../reducers/notifReducer'
 
-const Blog = ({ blog, setErrorMessage, setRefreshKey, refreshKey, user }) => {
-
-  const [showInfo, setShowInfo] = useState(false)
-
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
-  const handleLike = async () => {
-    const blogObject = {
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: blog.likes + 1
+const Blog = ({ blog, setRefreshKey, refreshKey, user }) => {
+    const [showInfo, setShowInfo] = useState(false)
+    const dispatch = useDispatch()
+    const blogStyle = {
+        paddingTop: 10,
+        paddingLeft: 2,
+        border: 'solid',
+        borderWidth: 1,
+        marginBottom: 5,
     }
 
-    try {
-      const likedBlog = await blogService.update(blogObject, blog.id)
+    const handleLike = async () => {
+        const blogObject = {
+            title: blog.title,
+            author: blog.author,
+            url: blog.url,
+            likes: blog.likes + 1,
+        }
 
-      setErrorMessage(
-        `${likedBlog.title} updated`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-      setRefreshKey(!refreshKey)
-
-    } catch (exception) {
-      setErrorMessage(
-        `${exception}`
-      )
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-
+        try {
+            const likedBlog = await blogService.update(blogObject, blog.id)
+            dispatch(timeNotif(`${likedBlog.title} updated`, 3))
+            setRefreshKey(!refreshKey)
+        } catch (exception) {
+            dispatch(timeNotif(`${exception}`, 3))
+        }
     }
-  }
 
-  const handleDelete = async () => {
-    if (window.confirm(`do you really want to delete ${blog.title}`)) {
-      try {
-        await blogService.deleteBlog(blog.id)
-        setErrorMessage(
-          `${blog.title} deleted`
+    const handleDelete = async () => {
+        if (window.confirm(`do you really want to delete ${blog.title}`)) {
+            try {
+                await blogService.deleteBlog(blog.id)
+                dispatch(timeNotif(`${blog.title} deleted`, 3))
+                setRefreshKey(!refreshKey)
+            } catch (exception) {
+                dispatch(timeNotif(`${exception}`, 3))
+            }
+        }
+    }
+
+    if (!showInfo) {
+        return (
+            <div style={blogStyle} className="blog">
+                <p>{blog.title}</p>
+                <p>{blog.author}</p>
+                <button onClick={() => setShowInfo(!showInfo)}>show</button>
+            </div>
         )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-        setRefreshKey(!refreshKey)
-      } catch (exception) {
-        setErrorMessage(
-          `${exception}`
-        )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-
-      }
     }
-
-  }
-
-  if (!showInfo) {
     return (
-      <div style={blogStyle} className='blog'>
-        <p>{blog.title}</p><p>{blog.author}</p><button onClick={() => setShowInfo(!showInfo)}>show</button>
-      </div>
-
+        <InfoBlog
+            blog={blog}
+            user={user}
+            blogStyle={blogStyle}
+            handleLike={handleLike}
+            setShowInfo={setShowInfo}
+            showInfo={showInfo}
+            handleDelete={handleDelete}
+        />
     )
-
-  }
-  return (
-    <InfoBlog blog={blog} user={user}
-    blogStyle={blogStyle} handleLike={handleLike}
-    setShowInfo={setShowInfo} showInfo={showInfo}
-    handleDelete={handleDelete}  />
-  )
-
-
 }
 
 export default Blog

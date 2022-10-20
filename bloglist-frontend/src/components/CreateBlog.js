@@ -1,14 +1,17 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
+import { timeNotif } from '../reducers/notifReducer'
 
-const CreateBlog = ({ handleCreateBlog }) => {
 
+const CreateBlog = ({ visibility }) => {
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
     const [url, setUrl] = useState('')
-
     const handleTitle = (event) => {
         setTitle(event.target.value)
     }
+    const dispatch = useDispatch()
 
     const handleAuthor = (event) => {
         setAuthor(event.target.value)
@@ -20,16 +23,23 @@ const CreateBlog = ({ handleCreateBlog }) => {
 
     const addBlog = (event) => {
         event.preventDefault()
-        handleCreateBlog({
+
+        const newBlog = {
             title: title,
             author: author,
             url: url,
-            likes: 0
-        })
-
-        setTitle('')
-        setAuthor('')
-        setUrl('')
+            likes: 0,
+        }
+        try {
+            dispatch(createBlog(newBlog))
+            setTitle('')
+            setAuthor('')
+            setUrl('')
+            visibility()
+            dispatch(timeNotif(`${newBlog.title} added!`, 3))
+        } catch (exception) {
+            dispatch(timeNotif(`${exception}`, 3))
+        }
     }
 
     return (
@@ -37,7 +47,7 @@ const CreateBlog = ({ handleCreateBlog }) => {
             <div>
                 title:
                 <input
-                    id='title'
+                    id="title"
                     type="text"
                     value={title}
                     name="Title"
@@ -48,7 +58,7 @@ const CreateBlog = ({ handleCreateBlog }) => {
                 author:
                 <input
                     type="text"
-                    id='author'
+                    id="author"
                     value={author}
                     name="Author"
                     onChange={handleAuthor}
@@ -58,7 +68,7 @@ const CreateBlog = ({ handleCreateBlog }) => {
                 url:
                 <input
                     type="text"
-                    id='url'
+                    id="url"
                     value={url}
                     name="Url"
                     onChange={handleUrl}
