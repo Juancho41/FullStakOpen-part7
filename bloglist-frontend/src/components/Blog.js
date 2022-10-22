@@ -1,13 +1,15 @@
-import { useState } from 'react'
 import InfoBlog from './InfoBlog'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { timeNotif } from '../reducers/notifReducer'
 import { changeVote, deleteBlog } from '../reducers/blogReducer'
-import { useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
 
-const Blog = ({ blog }) => {
-    const [showInfo, setShowInfo] = useState(false)
+const Blog = () => {
     const dispatch = useDispatch()
+    const id = useParams().id
+    const blogs = useSelector((state) => state.blogs)
+    const blog = blogs.find((blog) => blog.id === id)
+
     const blogStyle = {
         paddingTop: 10,
         paddingLeft: 2,
@@ -15,8 +17,6 @@ const Blog = ({ blog }) => {
         borderWidth: 1,
         marginBottom: 5,
     }
-
-    const user = useSelector((state) => state.user)
 
     const handleLike = () => {
         const blogObject = {
@@ -45,26 +45,16 @@ const Blog = ({ blog }) => {
         }
     }
 
-    if (!showInfo) {
+    if (blog) {
         return (
-            <div style={blogStyle} className="blog">
-                <p>{blog.title}</p>
-                <p>{blog.author}</p>
-                <button onClick={() => setShowInfo(!showInfo)}>show</button>
-            </div>
+            <InfoBlog
+                blog={blog}
+                blogStyle={blogStyle}
+                handleLike={handleLike}
+                handleDelete={handleDelete}
+            />
         )
     }
-    return (
-        <InfoBlog
-            blog={blog}
-            user={user}
-            blogStyle={blogStyle}
-            handleLike={handleLike}
-            setShowInfo={setShowInfo}
-            showInfo={showInfo}
-            handleDelete={handleDelete}
-        />
-    )
 }
 
 export default Blog

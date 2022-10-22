@@ -1,17 +1,18 @@
+import { useSelector } from 'react-redux'
+
 const InfoBlog = ({
     blog,
     blogStyle,
-    setShowInfo,
-    showInfo,
     handleDelete,
     handleLike,
-    user,
+
 }) => {
+
+    const user = useSelector((state) => state.user)
     if (user.username === blog.user.username) {
         return (
             <div style={blogStyle} className="blog">
                 <p>{blog.title} </p>
-                <button onClick={() => setShowInfo(!showInfo)}>hide</button>
                 <p>{blog.url}</p>
                 <p>
                     likes {blog.likes}{' '}
@@ -27,7 +28,6 @@ const InfoBlog = ({
         <div style={blogStyle} className="blog2 blog">
             <p>
                 <span>{blog.title}</span>
-                <button onClick={() => setShowInfo(!showInfo)}>hide</button>
             </p>
             <p>{blog.url}</p>
             <p>
