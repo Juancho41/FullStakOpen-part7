@@ -3,8 +3,9 @@ import InfoBlog from './InfoBlog'
 import { useDispatch } from 'react-redux'
 import { timeNotif } from '../reducers/notifReducer'
 import { changeVote, deleteBlog } from '../reducers/blogReducer'
+import { useSelector } from 'react-redux'
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
     const [showInfo, setShowInfo] = useState(false)
     const dispatch = useDispatch()
     const blogStyle = {
@@ -14,6 +15,8 @@ const Blog = ({ blog, user }) => {
         borderWidth: 1,
         marginBottom: 5,
     }
+
+    const user = useSelector((state) => state.user)
 
     const handleLike = () => {
         const blogObject = {
