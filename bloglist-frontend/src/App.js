@@ -5,32 +5,30 @@ import LoguinForm from './components/LoginForm'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
-import loginService from './services/login'
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { timeNotif } from './reducers/notifReducer'
-
+import { logginUser, setUser } from './reducers/userReducer'
 
 const App = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [user, setUser] = useState(null)
 
+    const user = useSelector((state) => state.user)
 
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(initializeBlogs())
-
     }, [])
 
-    const getblogs = useSelector(state => state.blogs)
+    const getblogs = useSelector((state) => state.blogs)
     const blogs = [...getblogs]
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
             const user = JSON.parse(loggedUserJSON)
-            setUser(user)
+            dispatch(setUser(user))
             blogService.setToken(user.token)
         }
     }, [])
@@ -45,29 +43,19 @@ const App = () => {
 
     const handleLogin = async (event) => {
         event.preventDefault()
-
-        try {
-            const user = await loginService.login({
-                username,
-                password,
-            })
-            window.localStorage.setItem(
-                'loggedBlogappUser',
-                JSON.stringify(user)
-            )
-            blogService.setToken(user.token)
-            setUser(user)
-            setUsername('')
-            setPassword('')
+        dispatch(logginUser(username, password))
+        setUsername('')
+        setPassword('')
+        if (!user) {
+            dispatch(timeNotif('Wrong credentials', 3))
+        } else {
             dispatch(timeNotif('Logged in successful', 3))
-        } catch (exception) {
-            dispatch(timeNotif(`Wrong credentials - ${exception}`, 3))
-            }
+        }
     }
 
     const handleLogout = () => {
         window.localStorage.clear()
-        setUser(null)
+        dispatch(setUser(null))
     }
     const visibility = () => {
         blogFormRef.current.toggleVisibility()
@@ -98,17 +86,13 @@ const App = () => {
             <h4>{user.name} loged in</h4>
             <button onClick={handleLogout}>LogOut</button>
             <Togglable buttonLabel="create new" ref={blogFormRef}>
-                <CreateBlog  visibility={visibility}/>
+                <CreateBlog visibility={visibility} />
             </Togglable>
 
             {blogs
                 .sort((a, b) => b.likes - a.likes)
                 .map((blog) => (
-                    <Blog
-                        key={blog.id}
-                        blog={blog}
-                        user={user}
-                    />
+                    <Blog key={blog.id} blog={blog} user={user} />
                 ))}
         </div>
     )
