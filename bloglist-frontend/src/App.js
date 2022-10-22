@@ -10,6 +10,7 @@ import { timeNotif } from './reducers/notifReducer'
 import { logginUser, setUser } from './reducers/userReducer'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { initializeUsers } from './reducers/userListReducer'
+import IndividualUser from './components/IndividualUser'
 
 const App = () => {
     const [username, setUsername] = useState('')
@@ -89,6 +90,7 @@ const App = () => {
                 </div>
 
                 <Routes>
+                    <Route path="/users/:id" element={<IndividualUser />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/" element={<BlogList />} />
                 </Routes>
