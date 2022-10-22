@@ -17,7 +17,6 @@ const blogSlice = createSlice({
         ...blogToChange,
         likes: blogToChange.likes + 1
       }
-      console.log(blogChanged)
       return state.map(blog => blog.id !== id ? blog : blogChanged)
     },
     setBlogs(state, action) {

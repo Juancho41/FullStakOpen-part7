@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import loginServices from '../services/login'
 import blogServices from '../services/blogs'
+import { timeNotif } from './notifReducer'
 
 
 const initialState = null
@@ -28,8 +29,11 @@ export const logginUser = (username, password) => {
             )
             blogServices.setToken(user.token)
             dispatch(setUser(user))
+            dispatch(timeNotif('Logged in successful', 3))
+
         } catch (error) {
-            console.log(error)
+            console.log(error.message)
+            dispatch(timeNotif(`Wrong Credentials - ${error.message}`, 3))
         }
     }
 }

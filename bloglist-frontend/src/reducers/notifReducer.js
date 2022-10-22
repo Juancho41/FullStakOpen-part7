@@ -23,7 +23,6 @@ export const timeNotif = (notif, time) => {
         clearTimeout(timeOut)
         dispatch(setNotif(notif))
         timeOut = setTimeout(() => {
-
             dispatch(nullNotif())
         }, time * 1000)
     }

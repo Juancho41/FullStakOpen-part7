@@ -6,7 +6,6 @@ import Users from './components/Users'
 import blogService from './services/blogs'
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
-import { timeNotif } from './reducers/notifReducer'
 import { logginUser, setUser } from './reducers/userReducer'
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { initializeUsers } from './reducers/userListReducer'
@@ -48,11 +47,7 @@ const App = () => {
         dispatch(logginUser(username, password))
         setUsername('')
         setPassword('')
-        if (!user) {
-            dispatch(timeNotif('Wrong credentials', 3))
-        } else {
-            dispatch(timeNotif('Logged in successful', 3))
-        }
+
     }
 
     const handleLogout = () => {
