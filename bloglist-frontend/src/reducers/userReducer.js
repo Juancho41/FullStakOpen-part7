@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import loginServices from '../services/login'
 import blogServices from '../services/blogs'
 
+
 const initialState = null
 
 const userSlice = createSlice({
@@ -21,14 +22,15 @@ export const logginUser = (username, password) => {
                 username,
                 password,
             })
-            window.localStorage.setItem('loggedBlogappUser', JSON.stringify(user))
+            window.localStorage.setItem(
+                'loggedBlogappUser',
+                JSON.stringify(user)
+            )
             blogServices.setToken(user.token)
             dispatch(setUser(user))
-
         } catch (error) {
             console.log(error)
         }
-
     }
 }
 

@@ -1,14 +1,15 @@
-import { useState, useEffect, useRef } from 'react'
-import Blog from './components/Blog'
-import CreateBlog from './components/CreateBlog'
+import { useState, useEffect } from 'react'
+import BlogList from './components/BlogList'
 import LoguinForm from './components/LoginForm'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import Users from './components/Users'
 import blogService from './services/blogs'
 import { useSelector, useDispatch } from 'react-redux'
 import { initializeBlogs } from './reducers/blogReducer'
 import { timeNotif } from './reducers/notifReducer'
 import { logginUser, setUser } from './reducers/userReducer'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { initializeUsers } from './reducers/userListReducer'
 
 const App = () => {
     const [username, setUsername] = useState('')
@@ -19,10 +20,10 @@ const App = () => {
     const dispatch = useDispatch()
     useEffect(() => {
         dispatch(initializeBlogs())
+        dispatch(initializeUsers())
     }, [])
 
-    const getblogs = useSelector((state) => state.blogs)
-    const blogs = [...getblogs]
+
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -57,11 +58,7 @@ const App = () => {
         window.localStorage.clear()
         dispatch(setUser(null))
     }
-    const visibility = () => {
-        blogFormRef.current.toggleVisibility()
-    }
 
-    const blogFormRef = useRef()
 
     if (user === null) {
         return (
@@ -80,21 +77,24 @@ const App = () => {
     }
 
     return (
-        <div>
-            <h2>blogs</h2>
-            <Notification />
-            <h4>{user.name} loged in</h4>
-            <button onClick={handleLogout}>LogOut</button>
-            <Togglable buttonLabel="create new" ref={blogFormRef}>
-                <CreateBlog visibility={visibility} />
-            </Togglable>
+        <Router>
+            <div>
+                <h2>blogs</h2>
+                <Notification />
+                <h4>{user.name} loged in</h4>
+                <button onClick={handleLogout}>LogOut</button>
+                <div>
+                    <Link to="/">Blogs</Link>
+                    <Link to="/users">Users</Link>
+                </div>
 
-            {blogs
-                .sort((a, b) => b.likes - a.likes)
-                .map((blog) => (
-                    <Blog key={blog.id} blog={blog} />
-                ))}
-        </div>
+                <Routes>
+                    <Route path="/users" element={<Users />} />
+                    <Route path="/" element={<BlogList />} />
+                </Routes>
+
+            </div>
+        </Router>
     )
 }
 
