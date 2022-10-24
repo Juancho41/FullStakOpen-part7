@@ -24,8 +24,6 @@ const App = () => {
         dispatch(initializeUsers())
     }, [])
 
-
-
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
         if (loggedUserJSON) {
@@ -48,14 +46,12 @@ const App = () => {
         dispatch(logginUser(username, password))
         setUsername('')
         setPassword('')
-
     }
 
     const handleLogout = () => {
         window.localStorage.clear()
         dispatch(setUser(null))
     }
-
 
     if (user === null) {
         return (
@@ -73,17 +69,25 @@ const App = () => {
         )
     }
 
+    const navStyle = {
+        padding: 10,
+        color: 'black',
+        backgroundColor: 'lightblue',
+    }
+
     return (
         <Router>
             <div>
-                <h2>blogs</h2>
+                <span style={navStyle}>
+                    <Link style={{ padding: 10 }} to="/">
+                        Blogs
+                    </Link>
+                    <Link style={{ padding: 10 }}  to="/users">Users</Link>
+                    <a style={{ padding: 10 }} >{user.name} loged in</a>
+                    <button onClick={handleLogout}>LogOut</button>
+                </span>
                 <Notification />
-                <h4>{user.name} loged in</h4>
-                <button onClick={handleLogout}>LogOut</button>
-                <div>
-                    <Link to="/">Blogs</Link>
-                    <Link to="/users">Users</Link>
-                </div>
+                <h2>Blog App</h2>
 
                 <Routes>
                     <Route path="/users/:id" element={<IndividualUser />} />
@@ -91,7 +95,6 @@ const App = () => {
                     <Route path="/users" element={<Users />} />
                     <Route path="/" element={<BlogList />} />
                 </Routes>
-
             </div>
         </Router>
     )
