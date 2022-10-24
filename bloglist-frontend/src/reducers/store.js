@@ -3,6 +3,7 @@ import blogSlice from './blogReducer'
 import notifSlice from './notifReducer'
 import userSlice from './userReducer'
 import usersListSlice from './userListReducer'
+import blogCommentSlice from './commentReducer'
 
 
 const store = configureStore({
@@ -10,8 +11,8 @@ const store = configureStore({
         blogs: blogSlice,
         notif: notifSlice,
         user: userSlice,
-        usersList: usersListSlice
-
+        usersList: usersListSlice,
+        comments: blogCommentSlice
     },
 })
 
