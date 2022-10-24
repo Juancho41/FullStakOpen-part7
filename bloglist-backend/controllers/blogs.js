@@ -1,6 +1,7 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const BlogComment = require('../models/blogComment')
 const jwt = require('jsonwebtoken')
 const middleware = require('../utils/middleware')
 
@@ -56,7 +57,7 @@ blogsRouter.put('/:id', async (request, response) => {
 blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, async (request, response) => {
 
     const user = request.user
-    
+
     const blog = await Blog.findById(request.params.id)
 
     if (blog.user.toString() === user._id.toString()) {
@@ -66,7 +67,29 @@ blogsRouter.delete('/:id', middleware.tokenExtractor, middleware.userExtractor, 
         return response.status(401).json({ error: 'Cant delete other people posts' })
     }
 
-    
+
+})
+
+//Comments for blogs
+
+
+blogsRouter.get('/:id/comments', async (request, response) => {
+
+    const comment = await BlogComment.find({ blog: request.params.id})
+    response.json(comment)
+
+})
+
+blogsRouter.post('/:id/comments', async (request, response) => {
+
+    const comment = new BlogComment({
+        content: request.body.content,
+        blog: request.params.id
+    })
+
+    const saveComment = await comment.save()
+    response.status(201).json(saveComment)
+
 })
 
 
