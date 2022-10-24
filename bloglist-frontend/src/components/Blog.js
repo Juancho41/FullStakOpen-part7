@@ -1,20 +1,27 @@
 import InfoBlog from './InfoBlog'
-import { useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { timeNotif } from '../reducers/notifReducer'
 import { changeVote, deleteBlog } from '../reducers/blogReducer'
 import { useParams } from 'react-router-dom'
-import { initializeComment } from '../reducers/commentReducer'
+import {
+    initializeComment,
+    createBlogComment,
+} from '../reducers/commentReducer'
 
 const Blog = () => {
+    const [newComment, setNewComment] = useState('')
     const dispatch = useDispatch()
     const id = useParams().id
     useEffect(() => {
         dispatch(initializeComment(id))
     }, [])
 
-    let comments = useSelector((state) => state.comments)
+    const handleNewComment = (event) => {
+        setNewComment(event.target.value)
+    }
 
+    let comments = useSelector((state) => state.comments)
 
     const blogs = useSelector((state) => state.blogs)
     const blog = blogs.find((blog) => blog.id === id)
@@ -41,7 +48,7 @@ const Blog = () => {
         }
     }
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (window.confirm(`do you really want to delete ${blog.title}`)) {
             try {
                 dispatch(deleteBlog(blog.id))
@@ -50,6 +57,16 @@ const Blog = () => {
                 dispatch(timeNotif(`${exception}`, 3))
             }
         }
+    }
+
+    const handleAddComment = (event) => {
+        event.preventDefault()
+        const newBlogComment = {
+            content: newComment,
+        }
+
+        dispatch(createBlogComment(id, newBlogComment))
+        setNewComment('')
     }
 
     if (!comments) {
@@ -66,6 +83,19 @@ const Blog = () => {
                     handleDelete={handleDelete}
                 />
                 <h3>Comments</h3>
+                <form onSubmit={handleAddComment}>
+                    <div>
+                        New Comment:
+                        <input
+                            id="NewComment"
+                            type="text"
+                            value={newComment}
+                            name="NewComment"
+                            onChange={handleNewComment}
+                        />
+                        <button type="submit">Add Comment</button>
+                    </div>
+                </form>
                 <ul>
                     {comments.map((comment) => (
                         <li key={comment.id}>{comment.content}</li>
@@ -74,7 +104,6 @@ const Blog = () => {
             </div>
         )
     }
-
 }
 
 export default Blog
