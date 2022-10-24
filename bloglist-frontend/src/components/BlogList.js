@@ -3,6 +3,14 @@ import { useSelector } from 'react-redux'
 import Togglable from './Togglable'
 import CreateBlog from './CreateBlog'
 import { Link } from 'react-router-dom'
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableRow,
+    Paper,
+  } from '@mui/material'
 
 const BlogList = () => {
     const getblogs = useSelector((state) => state.blogs)
@@ -14,13 +22,6 @@ const BlogList = () => {
 
     const blogFormRef = useRef()
 
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: 'solid',
-        borderWidth: 1,
-        marginBottom: 5,
-    }
 
     return (
         <div>
@@ -28,14 +29,25 @@ const BlogList = () => {
                 <CreateBlog visibility={visibility} />
             </Togglable>
 
-            {blogs
-                .sort((a, b) => b.likes - a.likes)
-                .map((blog) => (
-                    <p style={blogStyle} key={blog.id}>
-                        <Link to={`/blogs/${blog.id}`}> {blog.title} </Link>
-                    </p>
-
-                ))}
+            <TableContainer component={Paper}>
+                <Table>
+                    <TableBody>
+                        {blogs
+                            .sort((a, b) => b.likes - a.likes)
+                            .map((blog) => (
+                                <TableRow key={blog.id}>
+                                    <TableCell>
+                                        <Link to={`/blogs/${blog.id}`}>
+                                            {' '}
+                                            {blog.title}{' '}
+                                        </Link>
+                                    </TableCell>
+                                    <TableCell>{blog.user.name}</TableCell>
+                                </TableRow>
+                            ))}
+                    </TableBody>
+                </Table>
+            </TableContainer>
         </div>
     )
 }

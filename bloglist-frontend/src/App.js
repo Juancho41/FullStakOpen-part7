@@ -11,6 +11,14 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { initializeUsers } from './reducers/userListReducer'
 import IndividualUser from './components/IndividualUser'
 import Blog from './components/Blog'
+import {
+    Container,
+    AppBar,
+    Toolbar,
+    Button,
+    Box,
+    Typography,
+} from '@mui/material'
 
 const App = () => {
     const [username, setUsername] = useState('')
@@ -55,48 +63,66 @@ const App = () => {
 
     if (user === null) {
         return (
-            <div>
-                <Notification />
-                <h2>Log in to application</h2>
-                <LoguinForm
-                    handleLogin={handleLogin}
-                    handleUsername={handleUsername}
-                    handlePassword={handlePassword}
-                    username={username}
-                    password={password}
-                />
-            </div>
+            <Container>
+                <div>
+                    <Notification />
+                    <h2>Log in to application</h2>
+                    <LoguinForm
+                        handleLogin={handleLogin}
+                        handleUsername={handleUsername}
+                        handlePassword={handlePassword}
+                        username={username}
+                        password={password}
+                    />
+                </div>
+            </Container>
         )
     }
 
-    const navStyle = {
-        padding: 10,
-        color: 'black',
-        backgroundColor: 'lightblue',
-    }
-
     return (
-        <Router>
-            <div>
-                <span style={navStyle}>
-                    <Link style={{ padding: 10 }} to="/">
-                        Blogs
-                    </Link>
-                    <Link style={{ padding: 10 }}  to="/users">Users</Link>
-                    <a style={{ padding: 10 }} >{user.name} loged in</a>
-                    <button onClick={handleLogout}>LogOut</button>
-                </span>
-                <Notification />
-                <h2>Blog App</h2>
+        <Container>
+            <Router>
+                <div>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <AppBar position="static">
+                            <Toolbar>
+                                <Typography
+                                    variant="h6"
+                                    component="div"
+                                    sx={{ flexGrow: 1 }}
+                                >
+                                    Blogs App
+                                </Typography>
+                                <Button color="inherit" component={Link} to="/">
+                                    Blogs
+                                </Button>
+                                <Button
+                                    color="inherit"
+                                    component={Link}
+                                    to="/users"
+                                >
+                                    Users
+                                </Button>
+                                <a style={{ padding: 10 }}>
+                                    {user.name} loged in
+                                </a>
+                                <Button color="inherit" onClick={handleLogout}>
+                                    LogOut
+                                </Button>
+                            </Toolbar>
+                        </AppBar>
+                    </Box>
+                    <Notification />
 
-                <Routes>
-                    <Route path="/users/:id" element={<IndividualUser />} />
-                    <Route path="/blogs/:id" element={<Blog />} />
-                    <Route path="/users" element={<Users />} />
-                    <Route path="/" element={<BlogList />} />
-                </Routes>
-            </div>
-        </Router>
+                    <Routes>
+                        <Route path="/users/:id" element={<IndividualUser />} />
+                        <Route path="/blogs/:id" element={<Blog />} />
+                        <Route path="/users" element={<Users />} />
+                        <Route path="/" element={<BlogList />} />
+                    </Routes>
+                </div>
+            </Router>
+        </Container>
     )
 }
 

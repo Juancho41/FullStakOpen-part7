@@ -1,19 +1,19 @@
 import { useSelector } from 'react-redux'
+import { Alert } from '@mui/material'
 
 const Notification = () => {
 
-    const notifStyle = {
-        backgroundColor: 'black',
-        padding: 10,
-        color: 'white',
-    }
 
-    const notification = useSelector(state => state.notif)
+    const notification = useSelector((state) => state.notif)
     if (notification === null) {
         return null
     }
 
-    return <div className="error" style={notifStyle}>{notification}</div>
+    return (
+        <div>
+            {<Alert severity="success">{notification}</Alert>}
+        </div>
+    )
 }
 
 export default Notification
